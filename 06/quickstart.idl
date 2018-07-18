@@ -1,0 +1,19 @@
+//*****************************************************************************
+//*    (c) 2005-2018 Copyright, Real-Time Innovations, All rights reserved.   *
+//*                                                                           *
+//*         Permission to modify and use for internal purposes granted.       *
+//* This software is provided "as is", without warranty, express or implied.  *
+//*                                                                           *
+//*****************************************************************************
+
+module qs {
+
+    const string topicName = "quickstart_topic";
+
+    struct qs_type {
+        long id; //@key
+        long value1;
+        boolean condition1;
+        string<128> name;
+    };
+};

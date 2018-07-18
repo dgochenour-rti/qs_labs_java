@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<!-- 
+Description
+XML QoS Profile for quickstart
+
+The QoS configuration of the DDS entities in the generated example is loaded 
+from this file.
+
+This file is used only when it is in the current working directory or when the
+environment variable NDDS_QOS_PROFILES is defined and points to this file.
+
+The profile in this file inherits from the builtin QoS profile 
+BuiltinQosLib::Generic.StrictReliable. That profile, along with all of the 
+other built-in QoS profiles can be found in the 
+BuiltinProfiles.documentationONLY.xml file located in the 
+$NDDSHOME/resource/xml/ directory.
+
+You may use any of these QoS configurations in your application simply by 
+referring to them by the name shown in the 
+BuiltinProfiles.documentationONLY.xml file and listed below: 
+
+* In library "BuiltinQosLib":
+** Baseline
+** Baseline.5.0.0
+** Baseline.5.1.0
+** Baseline.5.2.0
+** Generic.Common
+** Generic.510TransportCompatibility
+** Generic.Monitoring.Common
+** Generic.ConnextMicroCompatibility
+** Generic.OtherDDSVendorCompatibility
+
+* In library "BuiltinQosLibExp":
+** Generic.StrictReliable
+** Generic.KeepLastReliable
+** Generic.BestEffort
+** Generic.StrictReliable.HighThroughput
+** Generic.StrictReliable.LowLatency
+** Generic.Participant.LargeData
+** Generic.Participant.LargeData.Monitoring
+** Generic.StrictReliable.LargeData
+** Generic.KeepLastReliable.LargeData
+** Generic.StrictReliable.LargeData.FastFlow
+** Generic.StrictReliable.LargeData.MediumFlow
+** Generic.StrictReliable.LargeData.SlowFlow
+** Generic.KeepLastReliable.LargeData.FastFlow
+** Generic.KeepLastReliable.LargeData.MediumFlow
+** Generic.KeepLastReliable.LargeData.SlowFlow
+** Generic.KeepLastReliable.TransientLocal
+** Generic.KeepLastReliable.Transient
+** Generic.KeepLastReliable.Persistent
+** Generic.AutoTuning
+** Pattern.PeriodicData
+** Pattern.Streaming
+** Pattern.ReliableStreaming
+** Pattern.Event
+** Pattern.AlarmEvent
+** Pattern.Status
+** Pattern.AlarmStatus
+** Pattern.LastValueCache
+
+You should not edit the file BuiltinProfiles.documentationONLY.xml directly.
+However, if you wish to modify any of the values in a built-in profile, the
+recommendation is to create a profile of your own and inherit from the built-in
+profile you wish to modify. The NDDS_QOS_PROFILES.example.xml file (contained in 
+the same directory as the BuiltinProfiles.documentationONLY.xml file) shows how
+to inherit from the built-in profiles. 
+
+For more information about XML QoS Profiles see Chapter 17 in the 
+RTI Connext user manual.
+-->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="/Applications/rti_connext_dds-5.3.0/resource/schema/rti_dds_qos_profiles.xsd"
+     version="5.3.0">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+
+        A QoS library is a named set of QoS profiles.
+    -->
+    <qos_library name="MyLibrary">
+
+        <!-- QoS profile used to configure reliable communication between the DataWriter 
+             and DataReader created in the example code.
+
+             A QoS profile groups a set of related QoS.
+        -->
+
+        <!-- LAB #8 - remove base_name, as well as TBF and deadline QoS -->
+        <qos_profile name="MyProfile">
+            <!-- QoS used to configure the data writer created in the example code -->                
+            <datawriter_qos>
+                <publication_name>
+                    <name>GochenourDataWriter</name>
+                </publication_name>
+                <!-- LAB #6 change back to shared ownership -->
+                <ownership>
+                    <kind>SHARED_OWNERSHIP_QOS</kind>
+                </ownership>
+                <ownership_strength>
+                    <value>10</value> <!-- note that this will be ignored w shared ownership -->
+                </ownership_strength>
+                <!-- LAB #8 -->
+                <protocol>	
+                    <rtps_reliable_writer>
+                        <low_watermark>0</low_watermark>
+                        <high_watermark>1</high_watermark>
+                        <heartbeat_period>
+                            <sec>0</sec>
+                            <nanosec>100000000</nanosec>
+                        </heartbeat_period>
+                        <fast_heartbeat_period>
+                            <sec>0</sec>
+                            <nanosec>100000000</nanosec>
+                        </fast_heartbeat_period>
+                        <late_joiner_heartbeat_period>
+                            <sec>0</sec>
+                            <nanosec>100000000</nanosec>
+                        </late_joiner_heartbeat_period>
+                    </rtps_reliable_writer>
+                </protocol>
+                <!-- LAB #9 - Add durability and history -->
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+                <history>
+                    <kind>KEEP_LAST_HISTORY_QOS</kind>
+                    <depth>10</depth>
+                </history>                             
+            </datawriter_qos>
+
+            <!-- QoS used to configure the data reader created in the example code -->                
+            <datareader_qos>
+                <subscription_name>
+                    <name>GochenourDataReader</name>
+                </subscription_name>
+                <!-- LAB #6 change back to shared ownership -->
+                <ownership>
+                    <kind>SHARED_OWNERSHIP_QOS</kind>
+                </ownership>
+                <!-- LAB #8 -->
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+                <!-- LAB #9 -->
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+                <history>
+                    <kind>KEEP_LAST_HISTORY_QOS</kind>
+                    <depth>15</depth>
+                </history>                              
+            </datareader_qos>
+            <participant_qos>
+                <!--
+                The participant name, if it is set, will be displayed in the
+                RTI tools, making it easier for you to tell one
+                application from another when you're debugging.
+                -->
+                <participant_name>
+                    <name>GochenourParticipant</name>
+                    <role_name>quickstartParticipantRole</role_name>
+                </participant_name>
+                <!-- LAB #9 - add monitoring library support -->
+                <property>
+                    <value>
+                        <element>
+                            <name>rti.monitor.library</name>
+                            <value>rtimonitoring</value>
+                        </element>
+                        <element>
+                            <name>rti.monitor.create_function</name>
+                            <value>RTIDefaultMonitor_create</value>
+                        </element>
+                    </value>
+                </property>
+            </participant_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>
